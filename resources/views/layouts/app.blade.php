@@ -117,6 +117,8 @@
     <a href="javascript:void(0)" onclick="openTab('diem-danh', '{{ route('diem-danh') }}')">Điểm danh</a>
     <a href="javascript:void(0)" onclick="openTab('phieu-danh-gia', '{{ route('phieu-danh-gia') }}')">Phiếu đánh giá</a>
     <a href="javascript:void(0)" onclick="openTab('lich-tuan', '{{ route('lich-tuan') }}')">Lịch theo tuần</a>
+    <a href="javascript:void(0)" onclick="openTab('home', '{{ route('home') }}')">Thông tin cá nhân</a>
+    <a href="javascript:void(0)" onclick="openTab('home', '{{ route('home') }}')">Nhập điểm</a>
 </div>
 
 <!-- Topbar -->
@@ -133,7 +135,6 @@
             </a>
             <ul class="dropdown-menu dropdown-menu-end">
                 @auth
-                    <li><a class="dropdown-item" href="#">Trang cá nhân</a></li>
                     <li>
                         <form action="{{ route('logout') }}" method="POST">
                             @csrf
