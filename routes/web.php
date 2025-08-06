@@ -2,6 +2,8 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\DiemDanhController;
+use App\Http\Controllers\LichController;
+use App\Http\Controllers\TeacherController;
 use Illuminate\Support\Facades\Auth;
 
 
@@ -30,16 +32,12 @@ Route::get('/phieu-danh-gia', function () {
     return view('phieu.index');
 })->name('phieu-danh-gia');
 
-Route::get('/lich-tuan', function () {
-    return view('lich.index');
-})->name('lich-tuan');
+Route::get('/lich-tuan', [LichController::class,'index'])->name('lich-tuan');
 
-Route::get('/info', function () {
-    return view('ThongTinGV.content');
-})->name('info');
+Route::get('/info',[TeacherController::class,'index'])->name('info');
 
+Auth::routes();
 Route::get('/login', function () {
-    Auth::routes();
     return view('auth.login');
 })->name('login');
 

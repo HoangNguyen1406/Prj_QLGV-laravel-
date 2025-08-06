@@ -1,11 +1,12 @@
 @extends('layouts.app')
 
 @section('content')
+@if (isset($getInfo))
 <div id="page-content">
     <div class="container my-5">
         <div class="card shadow-lg bg-dark text-light">
             <div class="card-header bg-primary text-white">
-                <h4 class="mb-0">Thông tin giáo viên: <strong>Đậu Đoàn Hải</strong></h4>
+                <h4 class="mb-0">Thông tin giáo viên: <strong>{{ $getInfo->Name }}</strong></h4>
             </div>
             <div class="card-body">
                 <div class="row g-4">
@@ -21,32 +22,26 @@
                     <div class="col-md-8">
                         <div class="row g-3">
                             <div class="col-sm-6">
-                                <strong>📞 Phone:</strong> (84) (54)952-9892
+                                <strong>📞 Phone:</strong> {{ $getInfo->Phone }}
                             </div>
                             <div class="col-sm-6">
-                                <strong>📧 Email:</strong> tcung@example.org
+                                <strong>📧 Email:</strong> {{ $getInfo->Email }}
                             </div>
                             <div class="col-sm-6">
-                                <strong>🎂 Năm sinh:</strong> 1995
+                                <strong>🎂 Năm sinh:</strong> {{ $getInfo->YearOfBirth }}
                             </div>
                             <div class="col-sm-6">
-                                <strong>👤 Giới tính:</strong> Nam
+                                <strong>👤 Giới tính:</strong> {{ $getInfo->Gender }}
                             </div>
                             <div class="col-sm-6">
-                                <strong>💼 Chức vụ:</strong> Tổ Trưởng Bộ Môn
+                                <strong>💼 Chức vụ:</strong> {{ $getInfo->Position }}
                             </div>
                             <div class="col-sm-6">
-                                <strong>🏢 Phòng ban:</strong> Chuyên Viên Hành Chính
+                                <strong>🏢 Phòng ban:</strong> {{ $getInfo->Department }}
                             </div>
                             <div class="col-12">
                                 <strong>📍 Địa chỉ:</strong><br>
-                                8, Ấp 8, Phường Phú Bộ, Huyện Trụ Thịnh, Ninh Bình
-                            </div>
-                            <div class="col-sm-6">
-                                <strong>📅 Ngày tạo:</strong> 2025-08-02 04:24:33
-                            </div>
-                            <div class="col-sm-6">
-                                <strong>🕒 Cập nhật:</strong> 2025-08-02 04:24:33
+                                {{ $getInfo->Address }}
                             </div>
                         </div>
                     </div>
@@ -55,4 +50,5 @@
         </div>
     </div>
 </div>
+@endif
 @endsection
