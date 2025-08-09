@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <title>Hệ thống quản lý</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
 
     <!-- Bootstrap 5 -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -76,15 +76,18 @@
 
         .tab-bar {
             position: fixed;
-            top: 60px;
-            left: 200px;
-            right: 0;
-            background-color: #191930;
-            padding: 5px 10px;
-            border-bottom: 1px solid #333;
-            display: flex;
-            gap: 8px;
-            z-index: 998;
+        top: 60px;
+        left: 200px;
+        right: 0;
+        background-color: #191930;
+        padding: 6px 12px;
+        border-bottom: 1px solid #333;
+        z-index: 998;
+        display: flex;
+        flex-wrap: nowrap; 
+        overflow-x: auto; 
+        gap: 8px;
+        white-space: nowrap; 
         }
 
         .tab-button {
@@ -107,6 +110,62 @@
             font-weight: bold;
             cursor: pointer;
         }
+
+        .toast {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            padding: 12px 20px;
+            background: #dc3545;
+            color: white;
+            border-radius: 4px;
+            z-index: 10000;
+        }
+
+        .toast-success {
+            background: #28a745;
+        }
+
+        .tab-loading {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        height: 200px;
+    }
+
+    .tab-loading .spinner {
+        border: 4px solid rgba(0, 0, 0, 0.1);
+        border-radius: 50%;
+        border-top: 4px solid #3498db;
+        width: 40px;
+        height: 40px;
+        animation: spin 1s linear infinite;
+        margin-bottom: 10px;
+    }
+
+    .tab-error {
+        padding: 20px;
+        background: #f8d7da;
+        color: #721c24;
+        border-radius: 5px;
+        text-align: center;
+    }
+
+    .tab-error .retry-btn {
+        margin-top: 10px;
+        padding: 5px 15px;
+        background: #dc3545;
+        color: white;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+    }
+
+    @keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+    }
     </style>
 </head>
 <body>
@@ -114,11 +173,11 @@
 <!-- Sidebar -->
 <div class="sidebar">
     <h5>HỆ HỆ HỆ</h5>
-    <a href="javascript:void(0)" onclick="openTab('diem-danh', '{{ route('diem-danh') }}')">Điểm danh</a>
+    <a href="javascript:void(0)" onclick="openTab('diem-danh', '{{ route('diem-danh.index') }}')">Điểm danh</a>
     <a href="javascript:void(0)" onclick="openTab('phieu-danh-gia', '{{ route('phieu-danh-gia') }}')">Phiếu đánh giá</a>
     <a href="javascript:void(0)" onclick="openTab('lich-tuan', '{{ route('lich-tuan') }}')">Lịch theo tuần</a>
     <a href="javascript:void(0)" onclick="openTab('info', '{{ route('info') }}')">Thông tin cá nhân</a>
-    <a href="javascript:void(0)" onclick="openTab('home', '{{ route('home') }}')">Nhập điểm</a>
+    <a href="javascript:void(0)" onclick="openTab('nhap-diem', '/nhap-diem.index');">Nhập điểm</a>
 </div>
 
 <!-- Topbar -->

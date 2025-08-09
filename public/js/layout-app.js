@@ -1,6 +1,3 @@
-fetch("{{ route('diem-danh') }}")
-  .then(r => r.text())
-  .then(t => console.log(t));
 
     const tabs = {};
 
