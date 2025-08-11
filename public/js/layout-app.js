@@ -58,3 +58,6 @@ fetch("{{ route('diem-danh') }}")
         if (btn) btn.remove();
         document.getElementById('tab-content').innerHTML = '<p>Đã đóng tab.</p>';
     }
+
+
+//---Set thời gian cho tab Lịch theo tuần

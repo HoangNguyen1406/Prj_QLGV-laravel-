@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="vi">
+
 <head>
     <meta charset="UTF-8">
     <title>Hệ thống quản lý</title>
@@ -109,58 +110,137 @@
         }
     </style>
 </head>
+
 <body>
 
-<!-- Sidebar -->
-<div class="sidebar">
-    <h5>HỆ HỆ HỆ</h5>
-    <a href="javascript:void(0)" onclick="openTab('diem-danh', '{{ route('diem-danh') }}')">Điểm danh</a>
-    <a href="javascript:void(0)" onclick="openTab('phieu-danh-gia', '{{ route('phieu-danh-gia') }}')">Phiếu đánh giá</a>
-    <a href="javascript:void(0)" onclick="openTab('lich-tuan', '{{ route('lich-tuan') }}')">Lịch theo tuần</a>
-    <a href="javascript:void(0)" onclick="openTab('info', '{{ route('info') }}')">Thông tin cá nhân</a>
-    <a href="javascript:void(0)" onclick="openTab('home', '{{ route('home') }}')">Nhập điểm</a>
-</div>
+    <!-- Sidebar -->
+    <div class="sidebar">
+        <h5>HỆ HỆ HỆ</h5>
+        <a href="javascript:void(0)" onclick="openTab('diem-danh', '{{ route('diem-danh') }}')">Điểm danh</a>
+        <a href="javascript:void(0)" onclick="openTab('phieu-danh-gia', '{{ route('phieu-danh-gia') }}')">Phiếu đánh giá</a>
+        <a href="javascript:void(0)" onclick="openTab('lich-tuan', '{{ route('lich-tuan') }}')">Lịch theo tuần</a>
+        <a href="javascript:void(0)" onclick="openTab('info', '{{ route('info') }}')">Thông tin cá nhân</a>
+        <a href="javascript:void(0)" onclick="openTab('home', '{{ route('home') }}')">Nhập điểm</a>
+    </div>
 
-<!-- Topbar -->
-<div class="top-bar">
-    <input type="text" placeholder="Tìm kiếm...">
+    <!-- Topbar -->
+    <div class="top-bar">
+        <input type="text" placeholder="Tìm kiếm...">
 
-    <div class="d-flex align-items-center gap-3">
-        <a href="#">🔔</a>
-        <a href="#">✉️</a>
+        <div class="d-flex align-items-center gap-3">
+            <a href="#">🔔</a>
+            <a href="#">✉️</a>
 
-        <div class="dropdown">
-            <a href="#" class="text-white dropdown-toggle" data-bs-toggle="dropdown">
-                👤 {{ Auth::check() ? Auth::user()->name : 'Khách' }}
-            </a>
-            <ul class="dropdown-menu dropdown-menu-end">
-                @auth
-                    <li>
-                        <form action="{{ route('logout') }}" method="POST">
-                            @csrf
-                            <button type="submit" class="dropdown-item">Đăng xuất</button>
-                        </form>
-                    </li>
-                @else
-                    <li><a class="dropdown-item" href="{{ route('login') }}">Đăng nhập</a></li>
-                @endauth
-            </ul>
+            <div class="dropdown">
+                <a href="#" class="text-white dropdown-toggle" data-bs-toggle="dropdown">
+                    👤 {{ Auth::check() ? Auth::user()->name : 'Khách' }}
+                </a>
+                <ul class="dropdown-menu dropdown-menu-end">
+                    @auth
+                        <li>
+                            <form action="{{ route('logout') }}" method="POST">
+                                @csrf
+                                <button type="submit" class="dropdown-item">Đăng xuất</button>
+                            </form>
+                        </li>
+                    @else
+                        <li><a class="dropdown-item" href="{{ route('login') }}">Đăng nhập</a></li>
+                    @endauth
+                </ul>
+            </div>
         </div>
     </div>
-</div>
 
-<!-- Tab Bar -->
-<div class="tab-bar" id="tab-bar"></div>
+    <!-- Tab Bar -->
+    <div class="tab-bar" id="tab-bar"></div>
 
-<!-- Nội dung chính -->
-<div class="main-content">
-    <div id="tab-content">
-          @yield('content')
+    <!-- Nội dung chính -->
+    <div class="main-content">
+        <div id="tab-content">
+            @yield('content')
+        </div>
     </div>
-</div>
 
-<!-- Scripts -->
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-<script src="{{ asset('js/layout-app.js') }}"></script>
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    @yield('scripts')
+    <script>
+        const tabs = {};
+
+        function openTab(key, url) {
+            if (tabs[key]) {
+                activateTab(key);
+                return;
+            }
+
+            const tabButton = document.createElement('button');
+            tabButton.classList.add('tab-button');
+            tabButton.id = `tab-btn-${key}`;
+            tabButton.innerHTML = key.replace(/-/g, ' ').toUpperCase();
+
+            const closeBtn = document.createElement('span');
+            closeBtn.innerHTML = '×';
+            closeBtn.classList.add('tab-close');
+            closeBtn.onclick = function (e) {
+                e.stopPropagation();
+                removeTab(key);
+            };
+
+            tabButton.appendChild(closeBtn);
+            tabButton.onclick = () => activateTab(key);
+            document.getElementById('tab-bar').appendChild(tabButton);
+
+            tabs[key] = { url };
+            activateTab(key);
+        }
+
+        function activateTab(key) {
+            document.querySelectorAll('.tab-button').forEach(btn => btn.classList.remove('active'));
+            const btn = document.getElementById(`tab-btn-${key}`);
+            if (btn) btn.classList.add('active');
+
+            fetch(tabs[key].url)
+                .then(res => res.text())
+                .then(html => {
+                    const temp = document.createElement('div');
+                    temp.innerHTML = html;
+
+                    const pageContent = temp.querySelector('#page-content');
+                    document.getElementById('tab-content').innerHTML = pageContent ? pageContent.innerHTML : 'Không thể tải nội dung.';
+
+                    // Chạy lại tất cả script trong nội dung mới
+                    temp.querySelectorAll('script').forEach(oldScript => {
+                        const newScript = document.createElement('script');
+                        if (oldScript.src) {
+                            newScript.src = oldScript.src;
+                        } else {
+                            newScript.textContent = oldScript.textContent;
+                        }
+                        document.body.appendChild(newScript);
+                    });
+
+                    temp.querySelectorAll('style').forEach(oldStyle => {
+                        const newStyle = document.createElement('style');
+                        if (oldStyle.src) {
+                            newStyle.src = oldStyle.src;
+                        } else {
+                            newStyle.textContent = oldStyle.textContent;
+                        }
+                        document.body.appendChild(newStyle);
+                    });
+                })
+                .catch(err => {
+                    document.getElementById('tab-content').innerHTML = '<p>Lỗi khi tải nội dung.</p>';
+                    console.error(err);
+                });
+        }
+
+        function removeTab(key) {
+            delete tabs[key];
+            const btn = document.getElementById(`tab-btn-${key}`);
+            if (btn) btn.remove();
+            document.getElementById('tab-content').innerHTML = '<p>Đã đóng tab.</p>';
+        }
+    </script>
 </body>
 </html>

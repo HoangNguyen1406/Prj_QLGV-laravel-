@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Auth;
 
 class LichController extends Controller
 {
@@ -15,15 +16,33 @@ class LichController extends Controller
     }
 
     function index(){
-        $startWeek = Carbon::now()->startOfWeek()->format('d/m/Y');
-        $now = Carbon::now()->format('Y-m-d');
-        $days = [];
+        // ID giáo viên hiện tại
+        $id = Auth::user()->id_teacher;
 
-        for ($i = 0; $i < 7; $i++) {
-            $days[$i] = Carbon::now()->startOfWeek()->copy()->addDays($i)->format('d/m/Y');
+        // Lấy tất cả lịch dạy của giáo viên
+        $getInfo = $this->db->where('id_teacher', $id)->get();
+
+        // Gom lịch theo ngày + buổi
+        $lichday = [];
+
+        foreach($getInfo as $lich){
+            $startSession = explode("-", $lich->SoTiet);
+            $firstN = (int)$startSession[0];
+
+            if ($firstN >= 1 && $firstN <= 5) {
+                $time = "Sáng";
+            } elseif ($firstN >= 6 && $firstN <= 12) {
+                $time = "Chiều";
+            } else {
+                $time = "Tối";
+            }
+
+            $ngay = date("Y-m-d", strtotime($lich->NgayDay));
+
+            // Có thể nhiều lịch cùng buổi trong 1 ngày → dùng [] thay vì gán =
+            $lichday[$ngay][$time][] = $lich;
         }
 
-        $getInfo = $this->db->where('id', 1)->first();
-        return view('lich.index',compact('getInfo','startWeek','days','now'));
+        return view('lich.index', compact('lichday'));
     }
 }

@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\Foundation\Auth\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Auth;
 
 class TeacherController extends Controller
 {
@@ -14,7 +16,8 @@ class TeacherController extends Controller
     }
 
     function index(){
-        $getInfo = $this->db->where('id',1)->first();
+        $id = Auth::user()->id_teacher;
+        $getInfo = $this->db->where('id',$id)->first();
         return view('ThongTinGV.content',compact('getInfo'));
     }
 }
