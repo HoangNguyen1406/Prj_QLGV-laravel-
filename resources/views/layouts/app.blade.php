@@ -84,10 +84,10 @@
         border-bottom: 1px solid #333;
         z-index: 998;
         display: flex;
-        flex-wrap: nowrap; 
-        overflow-x: auto; 
+        flex-wrap: nowrap;
+        overflow-x: auto;
         gap: 8px;
-        white-space: nowrap; 
+        white-space: nowrap;
         }
 
         .tab-button {
@@ -177,7 +177,7 @@
     <a href="javascript:void(0)" onclick="openTab('phieu-danh-gia', '{{ route('phieu-danh-gia') }}')">Phiếu đánh giá</a>
     <a href="javascript:void(0)" onclick="openTab('lich-tuan', '{{ route('lich-tuan') }}')">Lịch theo tuần</a>
     <a href="javascript:void(0)" onclick="openTab('info', '{{ route('info') }}')">Thông tin cá nhân</a>
-    <a href="javascript:void(0)" onclick="openTab('nhap-diem', '/nhap-diem.index');">Nhập điểm</a>
+    <a href="javascript:void(0)" onclick="openTab('nhap-diem', '{{ route('nhap-diem.index') }}');">Nhập điểm</a>
 </div>
 
 <!-- Topbar -->
