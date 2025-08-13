@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class BangDiem extends Model
 {
-    protected $table = 'bang_diem';
+    protected $table = 'diem_sinh_viens';
     protected $fillable = [
         'mssv',
         'lop_hoc_phan_id',
@@ -18,7 +18,7 @@ class BangDiem extends Model
 
      public function sinhVien()
     {
-        return $this->belongsTo(Student::class, 'sinh_vien_id');
+        return $this->belongsTo(Student::class, 'mssv');
     }
 
     public function lopHocPhan()

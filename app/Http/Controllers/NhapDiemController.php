@@ -2,56 +2,68 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
-use App\Models\SinhVien;
-use App\Models\LopHocPhan;
-use App\Models\BangDiem;
 use App\Models\Dot;
+use App\Models\LopHocPhan;
+use App\Models\Student;
+use App\Models\BangDiem;
+use Illuminate\Http\Request;
 
 class NhapDiemController extends Controller
 {
-    // Hiển thị form nhập điểm
     public function index(Request $request)
     {
-        // Lấy danh sách đợt 
+        // Lấy danh sách đợt và lớp học phần
         $dsDot = Dot::all();
-
-        // Lấy danh sách lớp học phần
         $lopHocPhans = LopHocPhan::all();
+        $sinhViens = collect(); // mặc định rỗng
+        $lopHocPhanId = null;
 
-        // Lấy danh sách sinh viên theo điều kiện lọc
-        $sinhViens = collect();
-        $lopHocPhanId = $request->input('lop_hoc_phan_id');
+        // Nếu người dùng tìm kiếm
+        if ($request->filled('dot') && $request->filled('ma_lop')) {
+            // Tìm lớp học phần ứng với mã lớp và đợt
+            $lopHocPhan = LopHocPhan::where('ma_lop', $request->ma_lop)
+                ->first();
 
-        return view('NhapDiem.index', compact(
-            'dsDot',
-            'lopHocPhans',
-            'sinhViens',
-            'lopHocPhanId'
-        ));
+            if ($lopHocPhan) {
+                $lopHocPhanId = $lopHocPhan->id;
+
+                // Lấy danh sách sinh viên kèm điểm
+                $sinhViens = Student::where('lop_hoc_phan_id', $lopHocPhanId)
+                    ->with(['diem' => function ($q) use ($lopHocPhanId) {
+                        $q->where('lop_hoc_phan_id', $lopHocPhanId);
+                    }])
+                    ->get();
+            }
+        }
+
+        return view('NhapDiem.index', [
+            'dsDot'         => $dsDot,
+            'lopHocPhans'   => $lopHocPhans,
+            'sinhViens'     => $sinhViens,
+            'lopHocPhanId'  => $lopHocPhanId
+        ]);
     }
 
-    // Lưu điểm
     public function store(Request $request)
     {
-        $lt_hs1 = $request->input('diem_he_so_1', []);
-        $lt_hs2 = $request->input('diem_he_so_2', []);
-        $thuc_hanh = $request->input('diem-thuc_hanh', []);
+        $mssvList = $request->input('mssv', []);
+        $lopHocPhanId = $request->input('lop_hoc_phan_id');
 
-        foreach ($lt_hs1 as $svId => $diem1) {
+        foreach ($mssvList as $key => $mssv) {
             BangDiem::updateOrCreate(
                 [
-                    'sinh_vien_id' => $svId,
-                    'lop_hoc_phan_id' => $request->input('lop_hoc_phan_id'),
+                    'mssv' => $mssv,
+                    'lop_hoc_phan_id' => $lopHocPhanId
                 ],
                 [
-                    'diem_he_so_1' => $diem1,
-                    'diem_he_so_2' => $lt_hs2[$svId] ?? null,
-                    'diem_thuc_hanh' => $thuc_hanh[$svId] ?? null,
+                    'diem_he_so_1'   => $request->input('diem_he_so_1')[$key] ?? null,
+                    'diem_he_so_2'   => $request->input('diem_he_so_2')[$key] ?? null,
+                    'diem_thuc_hanh' => $request->input('diem_thuc_hanh')[$key] ?? null
                 ]
             );
         }
 
-        return redirect()->route('nhap-diem.index')->with('success', 'Lưu điểm thành công');
+        return redirect()->route('nhap-diem.index')
+            ->with('success', 'Lưu điểm thành công');
     }
 }
